@@ -1,0 +1,5 @@
+image: openjdk:11
+
+build:
+  script:
+    - ./gradlew bootJar
