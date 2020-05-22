@@ -1,5 +1,10 @@
-image: openjdk:11
 
 build:
+  image: openjdk:11
   script:
     - ./gradlew bootJar
+
+deploy:
+  image: bitnami/kubectl
+  script:
+    - kubect apply -f deploy-to-k8s.yaml
