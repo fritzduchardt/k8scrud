@@ -24,3 +24,10 @@ jobs:
           get-rollout-status: true
           resource-file-path: deploy-to-k8s.yaml
           show-kubectl-command: true
+
+workflows:
+  version: 2.1
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy
