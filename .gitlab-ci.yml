@@ -1,10 +1,22 @@
+stages:
+  - build
+  - k8s
 
-build:
-  image: openjdk:11
+docker:
+  services:
+    - docker:18.05-dind
+  stage: build
+  image: docker:18.05
+  variables:
+    DOCKER_HOST: tcp://localhost:2375
   script:
-    - ./gradlew bootJar
+    - docker login registry.gitlab.com/ -u fritz_duchardt -p $GITLAB_PASSWORD
+    - docker build -t registry.gitlab.com/fritz_duchardt/k8scrud:latest .
+    - docker push registry.gitlab.com/fritz_duchardt/k8scrud:latest
 
 deploy:
-  image: bitnami/kubectl
+  stage: k8s
+  image: roffe/kubectl
   script:
-    - kubect apply -f deploy-to-k8s.yaml
+    - kubectl delete -f deploy-to-k8s.yaml || true
+    - kubectl apply -f deploy-to-k8s.yaml
