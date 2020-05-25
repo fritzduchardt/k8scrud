@@ -49,7 +49,7 @@ spec:
       imagePullSecrets:
         - name: gitlabregistrykey
       containers:
-        - image: registry.gitlab.com/fritz_duchardt/k8scrud:latest
+        - image: registry.sweetmemoryalbums.com/k8scrud:latest
           name: k8scrud
           env:
             - name: "k8scrud.yamldir"
