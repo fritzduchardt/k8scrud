@@ -3,11 +3,13 @@ orbs:
   kubernetes: circleci/kubernetes@0.11.0
 jobs:
   build:
-    docker: true
+    docker:
+      - docker
     working_directory: ~/repo
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run: |
           docker login registry.sweetmemoryalbums.com/ -u admin -p $GITLAB_PASSWORD
           docker build -t registry.sweetmemoryalbums.com/k8scrud:latest .
