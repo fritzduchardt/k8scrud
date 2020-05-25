@@ -4,7 +4,7 @@ orbs:
 jobs:
   build:
     docker:
-      - docker
+      - image: docker
     working_directory: ~/repo
     steps:
       - checkout
