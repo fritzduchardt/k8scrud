@@ -8,8 +8,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
+      - setup_remote_docker
       - run: |
           docker login registry.sweetmemoryalbums.com/ -u admin -p $GITLAB_PASSWORD
           docker build -t registry.sweetmemoryalbums.com/k8scrud:latest .
