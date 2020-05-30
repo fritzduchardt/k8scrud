@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  {{- include "k8scrud.namespace" . | nindent 2 }}
+  name: {{ include "k8scrud.fullname" . }}
+  labels:
+    {{- include "k8scrud.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "k8scrud.selectorLabels" . | nindent 4 }}

@@ -1,0 +1,16 @@
+{{- if not (.Values.serviceAccount.useClusterAdminRole) -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  {{- include "k8scrud.namespace" . | nindent 2 }}
+  name: {{ include "k8scrud.serviceAccountName" . }}
+  labels:
+        {{- include "k8scrud.labels" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "k8scrud.serviceAccountName" . }}
+roleRef:
+  kind: Role
+  name: {{ include "k8scrud.serviceAccountName" . }}
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}

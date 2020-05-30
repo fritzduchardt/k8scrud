@@ -12,9 +12,9 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: |
-          docker login registry.sweetmemoryalbums.com/ -u admin -p $GITLAB_PASSWORD
-          docker build -t registry.sweetmemoryalbums.com/k8scrud:latest .
-          docker push registry.sweetmemoryalbums.com/k8scrud:latest
+          docker login fritzduchardt/k8scrud -u fritz@duchardt.net -p $DOCKER_HUB_PASSWORD
+          docker build -t fritzduchardt/k8scrud:latest .
+          docker push fritzduchardt/k8scrud:latest
 
   deploy:
     docker:
@@ -32,4 +32,4 @@ workflows:
   version: 2.1
   build_and_deploy:
     jobs:
-      - deploy
+      - build
