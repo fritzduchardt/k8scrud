@@ -12,7 +12,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: |
-          docker login fritzduchardt/k8scrud -u fritz@duchardt.net -p $DOCKER_HUB_PASSWORD
+          docker login -u fritzduchardt -p $DOCKER_HUB_PASSWORD
           docker build -t fritzduchardt/k8scrud:latest .
           docker push fritzduchardt/k8scrud:latest
 
