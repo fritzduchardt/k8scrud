@@ -61,8 +61,6 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - restore_cache:
-          key: gradle-dependencies-{{ checksum "build.gradle" }}
       - run: |
           gradle release -Prelease.useAutomaticVersion=true
 
