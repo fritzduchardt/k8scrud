@@ -30,10 +30,10 @@ jobs:
       - image: docker
     working_directory: ~/repo
     steps:
-      - attach_workspace:
-          at: build
       - setup_remote_docker
       - checkout
+      - attach_workspace:
+          at: build
       - run: |
           VERSION=$(cat gradle.properties | grep -oE '\d+\.\d+.\d+')
           docker login -u fritzduchardt -p $DOCKER_HUB_PASSWORD
