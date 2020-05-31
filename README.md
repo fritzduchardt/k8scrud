@@ -118,6 +118,10 @@ Run on port 8765
 * Gradle 6.3
 * Lombok 1.18
 * JUnit 5
+* Docker 19.03.8
+* Helm 3
+* Kubernetes 1.17
+
 
 ## Author
 

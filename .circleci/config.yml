@@ -42,18 +42,6 @@ jobs:
           docker push fritzduchardt/k8scrud:$VERSION
           docker push fritzduchardt/k8scrud:latest
 
-  publish-github-release:
-    docker:
-      - image: cibuilds/github:0.10
-    steps:
-      - attach_workspace:
-          at: build
-      - run:
-          name: "Publish Release on GitHub"
-          command: |
-            VERSION=$(cat build/version.txt)
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./build/libs
-
   release-new-version:
     docker:
       - image: openjdk:11
@@ -85,9 +73,6 @@ workflows:
   build_release_and_deploy:
     jobs:
       - build
-      - publish-github-release:
-          requires:
-            - build
       - publish-docker-image:
           requires:
             - build
@@ -96,6 +81,5 @@ workflows:
             - build
       - release-new-version:
           requires:
-            - publish-github-release
             - publish-docker-image
             - deploy-to-k8s
