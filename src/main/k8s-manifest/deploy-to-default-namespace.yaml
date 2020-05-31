@@ -70,6 +70,13 @@ spec:
         - name: k8s-manifests
           persistentVolumeClaim:
             claimName: k8scrud
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: k8scrud
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

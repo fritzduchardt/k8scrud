@@ -59,6 +59,4 @@ nodeSelector: {}
 
 tolerations: []
 
-affinity: {}
-
 namespace: default

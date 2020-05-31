@@ -35,7 +35,7 @@ jobs:
       - attach_workspace:
           at: build
       - run: |
-          VERSION=$(cat /build/version.txt)
+          VERSION=$(cat build/version.txt)
           docker login -u fritzduchardt -p $DOCKER_HUB_PASSWORD
           docker build -f Dockerfile-singlestage -t fritzduchardt/k8scrud:latest .
           docker tag fritzduchardt/k8scrud:latest fritzduchardt/k8scrud:$VERSION
@@ -51,7 +51,7 @@ jobs:
       - run:
           name: "Publish Release on GitHub"
           command: |
-            VERSION=$(cat /build/version.txt)
+            VERSION=$(cat build/version.txt)
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./build/libs
 
   release-new-version:
@@ -61,7 +61,7 @@ jobs:
       - attach_workspace:
           at: build
       - run: |
-          VERSION=$(cat /build/version.txt)
+          VERSION=$(cat build/version.txt)
           git config --global user.email "fritz@duchardt.net"
           git config --global user.name "Fritz Duchardt"
           git tag -d $VERSION &
