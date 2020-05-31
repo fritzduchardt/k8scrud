@@ -5,7 +5,7 @@
 replicaCount: 2
 
 image:
-  repository: k8scrud
+  repository: fritzduchardt/k8scrud
   # make IfNotPresent
   pullPolicy: Always
   # Overrides the image tag whose default is the chart version.

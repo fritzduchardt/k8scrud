@@ -3,12 +3,18 @@ kind: ServiceAccount
 metadata:
   name: k8scrud
   namespace: default
+  labels:
+    app.kubernetes.io/name: k8scrud
+    app.kubernetes.io/instance: k8scrud
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: k8scrud
   namespace: default
+  labels:
+    app.kubernetes.io/name: k8scrud
+    app.kubernetes.io/instance: k8scrud
 rules:
   - apiGroups: ["*"]
     resources: ["*"]
@@ -19,6 +25,9 @@ kind: RoleBinding
 metadata:
   name: k8scrud
   namespace: default
+  labels:
+    app.kubernetes.io/name: k8scrud
+    app.kubernetes.io/instance: k8scrud
 subjects:
   - kind: ServiceAccount
     name: k8scrud
@@ -31,25 +40,25 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: k8scrud
+    app.kubernetes.io/name: k8scrud
+    app.kubernetes.io/instance: k8scrud
   name: k8scrud
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: k8scrud
+      app.kubernetes.io/name: k8scrud
   strategy: {}
   template:
     metadata:
       labels:
-        app: k8scrud
+        app.kubernetes.io/name: k8scrud
+        app.kubernetes.io/instance: k8scrud
     spec:
       serviceAccountName: k8scrud
-      imagePullSecrets:
-        - name: gitlabregistrykey
       containers:
-        - image: registry.sweetmemoryalbums.com/k8scrud:latest
+        - image: fritzduchardt/k8scrud:latest
           name: k8scrud
           env:
             - name: "k8scrud.yamldir"
@@ -59,7 +68,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: k8scrud
+    app.kubernetes.io/name: k8scrud
+    app.kubernetes.io/instance: k8scrud
   name: k8scrud
   namespace: default
 spec:
@@ -68,6 +78,6 @@ spec:
       protocol: TCP
       targetPort: 8080
   selector:
-    app: k8scrud
+    app.kubernetes.io/name: k8scrud
   type: ClusterIP
 
