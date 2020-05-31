@@ -14,9 +14,11 @@ jobs:
       - run: |
           ./gradlew bootJar
       - persist_to_workspace:
-          root: build
+          root: .
           paths:
-            - libs
+            - build/libs/*.jar
+            - gradle.properties
+            - deploy/manifest/deploy-to-default-namespace.yaml
 
   publish-docker-image:
     docker:
@@ -26,11 +28,11 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: |
-          LAST_RELEASE=$(curl --silent "https://api.github.com/repos/fritzduchardt/k8scrud/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")')
+          VERSION=$(cat gradle.properties | grep -oP '\d+\.\d+.\d+')
           docker login -u fritzduchardt -p $DOCKER_HUB_PASSWORD
-          docker build -t fritzduchardt/k8scrud:LAST_RELEASE .
-          docker tag fritzduchardt/k8scrud:latest fritzduchardt/k8scrud:LAST_RELEASE
-          docker push fritzduchardt/k8scrud:LAST_RELEASE
+          docker build -t fritzduchardt/k8scrud:$VERSION .
+          docker tag fritzduchardt/k8scrud:latest fritzduchardt/k8scrud:$VERSION
+          docker push fritzduchardt/k8scrud:$VERSION
           docker push fritzduchardt/k8scrud:latest
 
   publish-github-release:
@@ -38,18 +40,27 @@ jobs:
       - image: cibuilds/github:0.10
     steps:
       - attach_workspace:
-          at: build
+          at: .
       - run:
           name: "Publish Release on GitHub"
           command: |
-            VERSION=0.0.2
+            VERSION=$(LAST_RELEASEcat gradle.properties | grep -oP '\d+\.\d+.\d+')
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./build/libs
 
-  deploy:
+  release-new-version:
     docker:
       - image: 'cimg/base:stable'
     steps:
       - checkout
+      - run: |
+          gradle release -Prelease.useAutomaticVersion=true
+
+  deploy-to-k8s:
+    docker:
+      - image: 'cimg/base:stable'
+    steps:
+      - attach_workspace:
+        at: .
       - kube-orb/install:
           kubectl-version: v1.15.2
       - kube-orb/install-kubeconfig:
@@ -65,9 +76,14 @@ workflows:
       - publish-github-release:
           requires:
             - build
-#      - publish-docker-image:
-#          requires:
-#            - publish-github-release
-#      - deploy:
-#          requires:
-#            - build
+      - publish-docker-image:
+          requires:
+            - build
+      - deploy-to-k8s:
+          requires:
+            - build
+      - release-new-version-to-k8s:
+          requires:
+            - publish-github-release
+            - publish-docker-image
+            - deploy-to-k8s
