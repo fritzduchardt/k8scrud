@@ -16,10 +16,12 @@ jobs:
       - run: |
           ./gradlew bootJar
           mv build/libs/k8scrud*jar build/libs/k8scrud.jar
+          $(cat gradle.properties | grep -oE '\d+\.\d+.\d+') > build/version.txt
       - persist_to_workspace:
           root: build
           paths:
             - libs/*.jar
+            - version.txt
       - save_cache:
           key: gradle-dependencies-{{ checksum "build.gradle" }}
           paths:
@@ -35,7 +37,7 @@ jobs:
       - attach_workspace:
           at: build
       - run: |
-          VERSION=$(cat gradle.properties | grep -oE '\d+\.\d+.\d+')
+          VERSION=$(cat version.txt)
           docker login -u fritzduchardt -p $DOCKER_HUB_PASSWORD
           docker build -f Dockerfile-singlestage -t fritzduchardt/k8scrud:latest .
           docker tag fritzduchardt/k8scrud:latest fritzduchardt/k8scrud:$VERSION
@@ -46,23 +48,22 @@ jobs:
     docker:
       - image: cibuilds/github:0.10
     steps:
-      - checkout
       - attach_workspace:
           at: build
       - run:
           name: "Publish Release on GitHub"
           command: |
-            VERSION=$(cat gradle.properties | grep -oE '\d+\.\d+.\d+')
+            VERSION=$(cat version.txt)
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./build/libs
 
   release-new-version:
     docker:
       - image: openjdk:11
-    working_directory: ~/repo
     steps:
-      - checkout
+      - attach_workspace:
+          at: build
       - run: |
-          VERSION=$(cat gradle.properties | grep -oE '\d+\.\d+.\d+')
+          VERSION=$(cat version.txt)
           git config --global user.email "fritz@duchardt.net"
           git config --global user.name "Fritz Duchardt"
           git tag -d $VERSION &
