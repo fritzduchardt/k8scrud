@@ -1,6 +1,7 @@
-# K8s Crud
+# K8scrud (Create,Replace,Update & Delete)
 
-K8s Crud starts a slim web server that performs CRUD operations on yaml files from within your K8s Cluster.
+K8scrud allows you to dynamically deploy or delete applications in your K8s cluster, triggered by REST-calls.
+
 
 ## Getting Started
 
