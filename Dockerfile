@@ -2,6 +2,7 @@ FROM openjdk:11
 COPY . /k8scrud
 WORKDIR /k8scrud
 RUN ./gradlew bootJar
+RUN mv ./build/libs/*.jar ./build/libs/k8scrud.jar
 
 FROM debian:buster
 RUN apt update && \
