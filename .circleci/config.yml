@@ -19,7 +19,6 @@ jobs:
       - persist_to_workspace:
           root: build
           paths:
-            - libs/*.jar
             - version.txt
       - save_cache:
           key: gradle-dependencies-{{ checksum "build.gradle" }}
@@ -78,8 +77,7 @@ workflows:
             - build
       - deploy-to-k8s:
           requires:
-            - build
+            - publish-docker-image
       - release-new-version:
           requires:
-            - publish-docker-image
             - deploy-to-k8s

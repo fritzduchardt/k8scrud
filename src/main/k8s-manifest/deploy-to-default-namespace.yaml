@@ -59,6 +59,7 @@ spec:
       serviceAccountName: k8scrud
       containers:
         - image: fritzduchardt/k8scrud:latest
+          imagePullPolicy: Always
           name: k8scrud
           env:
             - name: "k8scrud.yamldir"
