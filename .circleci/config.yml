@@ -60,7 +60,7 @@ jobs:
       - image: 'cimg/base:stable'
     steps:
       - attach_workspace:
-        at: .
+          at: .
       - kube-orb/install:
           kubectl-version: v1.15.2
       - kube-orb/install-kubeconfig:
