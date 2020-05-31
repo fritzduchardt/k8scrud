@@ -6,8 +6,7 @@ orbs:
 jobs:
   build:
     docker:
-      # any circle ci convenience image will do
-      - image: 'circleci/golang:latest'
+      - image: docker
     working_directory: ~/repo
     steps:
       - checkout
@@ -20,9 +19,19 @@ jobs:
           docker push fritzduchardt/k8scrud:LAST_RELEASE
           docker push fritzduchardt/k8scrud:latest
 
+  publish-github-release:
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            VERSION=0.0.2
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} .
+
   deploy:
     docker:
-      - image: 'circleci/golang:latest'
+      - image: 'cimg/base:stable'
     steps:
       - checkout
       - kube-orb/install:
@@ -36,7 +45,8 @@ workflows:
   version: 2.1
   build_and_deploy:
     jobs:
-      - build
-      - deploy:
-          requires:
-            - build
+#      - build
+      - publish-github-release
+#      - deploy:
+#          requires:
+#            - build
