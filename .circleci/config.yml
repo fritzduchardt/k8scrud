@@ -57,7 +57,7 @@ jobs:
 
   release-new-version:
     docker:
-      - image: 'cimg/base:stable'
+      - image: openjdk:11
     working_directory: ~/repo
     steps:
       - checkout
