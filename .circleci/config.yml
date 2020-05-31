@@ -12,10 +12,11 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: |
+          LAST_RELEASE=$(curl --silent "https://api.github.com/repos/fritzduchardt/k8scrud/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")')
           docker login -u fritzduchardt -p $DOCKER_HUB_PASSWORD
-          docker build -t fritzduchardt/k8scrud:$VERSION .
-          docker tag fritzduchardt/k8scrud:latest fritzduchardt/k8scrud:$VERSION
-          docker push fritzduchardt/k8scrud:$VERSION
+          docker build -t fritzduchardt/k8scrud:LAST_RELEASE .
+          docker tag fritzduchardt/k8scrud:latest fritzduchardt/k8scrud:LAST_RELEASE
+          docker push fritzduchardt/k8scrud:LAST_RELEASE
           docker push fritzduchardt/k8scrud:latest
 
   deploy:
