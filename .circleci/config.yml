@@ -14,9 +14,9 @@ jobs:
       - run: |
           ./gradlew bootJar
       - persist_to_workspace:
-          root: /tmp
+          root: build
           paths:
-            - build/libs
+            - libs
 
   publish-docker-image:
     docker:
@@ -38,7 +38,7 @@ jobs:
       - image: cibuilds/github:0.10
     steps:
       - attach_workspace:
-          at: /tmp
+          at: build
       - run:
           name: "Publish Release on GitHub"
           command: |
