@@ -9,8 +9,7 @@ image:
   # make IfNotPresent
   pullPolicy: Always
   # Overrides the image tag whose default is the chart version.
-  # todo make fixed version
-  tag: "latest"
+  tag: "0.0.1"
 
 imagePullSecrets: []
 nameOverride: ""
