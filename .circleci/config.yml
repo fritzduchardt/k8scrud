@@ -82,7 +82,7 @@ workflows:
       - deploy-to-k8s:
           requires:
             - build
-      - release-new-version-to-k8s:
+      - release-new-version:
           requires:
             - publish-github-release
             - publish-docker-image
