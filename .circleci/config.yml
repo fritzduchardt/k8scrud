@@ -62,8 +62,10 @@ jobs:
     steps:
       - checkout
       - run: |
+          VERSION=$(cat gradle.properties | grep -oE '\d+\.\d+.\d+')
           git config --global user.email "fritz@duchardt.net"
           git config --global user.name "Fritz Duchardt"
+          git tag -d $VERSION
           ./gradlew release -Prelease.useAutomaticVersion=true
 
   deploy-to-k8s:

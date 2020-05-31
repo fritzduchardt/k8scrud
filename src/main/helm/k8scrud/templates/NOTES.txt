@@ -1,1 +1,17 @@
-1. Get the application URL by running these commands:
+K8scrud was successfully deployed to the "{{ .Values.namespace }}" namespace of your cluster.
+
+Now, transfer your K8s manifest files to K8scrud, e.g. for the provided example.yaml file:
+
+K8SCRUD_POD=$(kubectl get pod -l app.kubernetes.io/name=k8scrud -o jsonpath="{.items[0].metadata.name}")
+kubectl cp k8scrud-manifests/example.yaml $K8SCRUD_POD:/k8s-manifests
+
+Please ensure that your manifest contains all K8s resources for your deployment in one file concatenated with "---"
+
+Once the file is transferred, you can dynamically deploy it by calling the K8scrud REST endpoint.
+
+
+
+
+
+
+

@@ -45,7 +45,7 @@ metadata:
   name: k8scrud
   namespace: default
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app.kubernetes.io/name: k8scrud
@@ -63,6 +63,25 @@ spec:
           env:
             - name: "k8scrud.yamldir"
               value: "/"
+          volumeMounts:
+            - mountPath: k8s-manifests
+              name: k8s-manifests
+      volumes:
+        - name: k8s-manifests
+          persistentVolumeClaim:
+            claimName: k8scrud
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: k8scrud
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 1078Mi
 ---
 apiVersion: v1
 kind: Service
