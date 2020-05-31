@@ -62,7 +62,7 @@ jobs:
     steps:
       - checkout
       - run: |
-          gradle release -Prelease.useAutomaticVersion=true
+          ./gradlew release -Prelease.useAutomaticVersion=true
 
   deploy-to-k8s:
     docker:
@@ -79,7 +79,7 @@ jobs:
 
 workflows:
   version: 2.1
-  build_and_deploy:
+  build_release_and_deploy:
     jobs:
       - build
       - publish-github-release:
