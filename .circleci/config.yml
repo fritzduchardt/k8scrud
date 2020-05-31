@@ -16,11 +16,9 @@ jobs:
       - run: |
           ./gradlew bootJar
       - persist_to_workspace:
-          root: .
+          root: build
           paths:
-            - build/libs/*.jar
-            - gradle.properties
-            - deploy/manifest/deploy-to-default-namespace.yaml
+            - libs/*.jar
       - save_cache:
           key: gradle-dependencies-{{ checksum "build.gradle" }}
           paths:
@@ -45,12 +43,13 @@ jobs:
     docker:
       - image: cibuilds/github:0.10
     steps:
+      - checkout
       - attach_workspace:
-          at: .
+          at: build
       - run:
           name: "Publish Release on GitHub"
           command: |
-            VERSION=$(LAST_RELEASEcat gradle.properties | grep -oE '\d+\.\d+.\d+')
+            VERSION=$(cat gradle.properties | grep -oE '\d+\.\d+.\d+')
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./build/libs
 
   release-new-version:
@@ -67,8 +66,7 @@ jobs:
     docker:
       - image: 'cimg/base:stable'
     steps:
-      - attach_workspace:
-          at: .
+      - checkout
       - kube-orb/install:
           kubectl-version: v1.15.2
       - kube-orb/install-kubeconfig:
