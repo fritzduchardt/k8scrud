@@ -15,6 +15,7 @@ jobs:
           key: gradle-dependencies-{{ checksum "build.gradle" }}
       - run: |
           ./gradlew bootJar
+          mv build/libs/k8scrud*jar build/libs/k8scrud.jar
       - persist_to_workspace:
           root: build
           paths:
@@ -29,12 +30,14 @@ jobs:
       - image: docker
     working_directory: ~/repo
     steps:
-      - checkout
+      - attach_workspace:
+          at: build
       - setup_remote_docker
+      - checkout
       - run: |
           VERSION=$(cat gradle.properties | grep -oE '\d+\.\d+.\d+')
           docker login -u fritzduchardt -p $DOCKER_HUB_PASSWORD
-          docker build -t fritzduchardt/k8scrud:$VERSION .
+          docker build -f Dockerfile-singlestage -t fritzduchardt/k8scrud:latest .
           docker tag fritzduchardt/k8scrud:latest fritzduchardt/k8scrud:$VERSION
           docker push fritzduchardt/k8scrud:$VERSION
           docker push fritzduchardt/k8scrud:latest
