@@ -4,7 +4,21 @@ orbs:
   kube-orb: circleci/kubernetes@0.11.0
 
 jobs:
+
   build:
+    docker:
+      - image: openjdk:11
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run: |
+          ./gradlew bootJar
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - build/libs
+
+  publish-docker-image:
     docker:
       - image: docker
     working_directory: ~/repo
@@ -22,15 +36,14 @@ jobs:
   publish-github-release:
     docker:
       - image: cibuilds/github:0.10
-    working_directory: ~/repo
     steps:
-      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
       - run:
           name: "Publish Release on GitHub"
           command: |
             VERSION=0.0.2
-            mkdir empty
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./empty
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./build/libs
 
   deploy:
     docker:
@@ -48,8 +61,11 @@ workflows:
   version: 2.1
   build_and_deploy:
     jobs:
-#      - build
+#      - publish-docker-image
+      - build
       - publish-github-release
+          requires:
+            - build
 #      - deploy:
 #          requires:
 #            - build
