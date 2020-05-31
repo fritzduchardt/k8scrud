@@ -8,7 +8,6 @@ jobs:
   build:
     docker:
       - image: openjdk:11
-    working_directory: ~/repo
     steps:
       - checkout
       - restore_cache:
@@ -16,7 +15,7 @@ jobs:
       - run: |
           ./gradlew bootJar
           mv build/libs/k8scrud*jar build/libs/k8scrud.jar
-          echo $(cat gradle.properties | grep -oE '\d+\.\d+.\d+') > build/version.txt
+          echo $(cat gradle.properties | grep -oP '\d+\.\d+.\d+') > build/version.txt
       - persist_to_workspace:
           root: build
           paths:
@@ -30,14 +29,13 @@ jobs:
   publish-docker-image:
     docker:
       - image: docker
-    working_directory: ~/repo
     steps:
       - setup_remote_docker
       - checkout
       - attach_workspace:
           at: build
       - run: |
-          VERSION=$(cat build/version.txt)
+          VERSION=$(cat /build/version.txt)
           docker login -u fritzduchardt -p $DOCKER_HUB_PASSWORD
           docker build -f Dockerfile-singlestage -t fritzduchardt/k8scrud:latest .
           docker tag fritzduchardt/k8scrud:latest fritzduchardt/k8scrud:$VERSION
@@ -53,7 +51,7 @@ jobs:
       - run:
           name: "Publish Release on GitHub"
           command: |
-            VERSION=$(cat build/version.txt)
+            VERSION=$(cat /build/version.txt)
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./build/libs
 
   release-new-version:
@@ -63,7 +61,7 @@ jobs:
       - attach_workspace:
           at: build
       - run: |
-          VERSION=$(cat build/version.txt)
+          VERSION=$(cat /build/version.txt)
           git config --global user.email "fritz@duchardt.net"
           git config --global user.name "Fritz Duchardt"
           git tag -d $VERSION &
@@ -72,7 +70,6 @@ jobs:
   deploy-to-k8s:
     docker:
       - image: 'cimg/base:stable'
-    working_directory: ~/repo
     steps:
       - checkout
       - kube-orb/install:
