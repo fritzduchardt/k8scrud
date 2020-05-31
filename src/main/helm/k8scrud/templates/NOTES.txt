@@ -9,7 +9,12 @@ Please ensure that your manifest contains all K8s resources for your deployment 
 
 Once the file is transferred, you can dynamically deploy it by calling the K8scrud REST endpoint.
 
+kubectl port-forward service/k8scrud 8080
+curl -X PUT localhost:8080/example
 
+Deployments can be dynamically deleted like this:
+
+curl -X DELETE localhost:8080/example
 
 
 
