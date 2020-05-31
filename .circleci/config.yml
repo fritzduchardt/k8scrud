@@ -55,6 +55,7 @@ jobs:
   release-new-version:
     docker:
       - image: 'cimg/base:stable'
+    working_directory: ~/repo
     steps:
       - checkout
       - restore_cache:
@@ -65,6 +66,7 @@ jobs:
   deploy-to-k8s:
     docker:
       - image: 'cimg/base:stable'
+    working_directory: ~/repo
     steps:
       - checkout
       - kube-orb/install:
