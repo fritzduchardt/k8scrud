@@ -61,11 +61,13 @@ workflows:
   version: 2.1
   build_and_deploy:
     jobs:
-#      - publish-docker-image
       - build
       - publish-github-release:
           requires:
             - build
+#      - publish-docker-image:
+#          requires:
+#            - publish-github-release
 #      - deploy:
 #          requires:
 #            - build
