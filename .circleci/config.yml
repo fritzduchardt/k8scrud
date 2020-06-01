@@ -90,15 +90,13 @@ workflows:
       - release-docker-image:
           filters:
             branches:
-              only:
-                - master
+              only: master
           requires:
             - build
       - create-snapshot-docker-image:
           filters:
             branches:
-              ingore:
-                - master
+              ingore: master
           requires:
             - build
       - deploy-to-k8s:
@@ -107,7 +105,6 @@ workflows:
       - release-new-version:
           filters:
             branches:
-              only:
-                - master
+              only: master
           requires:
             - deploy-to-k8s
