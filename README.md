@@ -31,7 +31,7 @@ helm install k8scrud ./src/main/helm/k8scrud --debug --set-string namespace=defa
 
 Installation into kube-system with cluster admin rights:
 ```shell script
-helm install k8scrud ./k8scrud --set serviceAccount.useClusterAdminRole=true
+helm install k8scrud ./src/main/helm/k8scrud --set serviceAccount.useClusterAdminRole=true
 ```
 ## Usage
 

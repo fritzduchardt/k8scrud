@@ -35,11 +35,6 @@ public class K8sCrudController {
         }
     }
 
-    @PutMapping(path="/{yaml}")
-    public K8sResponseDto apply(@PathVariable String yaml) throws IOException, InterruptedException {
-        return new K8sResponseDto(k8sDispatcher.apply(yaml));
-    }
-
     @DeleteMapping(path="/{yaml}/{id}")
     public K8sResponseDto delete(@PathVariable String yaml, @PathVariable String id) throws IOException, InterruptedException {
         return new K8sResponseDto(k8sDispatcher.delete(yaml, id));

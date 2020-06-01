@@ -8,6 +8,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: {{ include "k8scrud.serviceAccountName" . }}
+    namespace: kube-system
 roleRef:
   kind: ClusterRole
   name: "cluster-admin"

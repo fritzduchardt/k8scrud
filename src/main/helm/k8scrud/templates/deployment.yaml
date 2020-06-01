@@ -38,14 +38,21 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
+              path: /health
               port: http
           readinessProbe:
             httpGet:
-              path: /
+              path: /health
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /k8s-manifests
+              name: k8s-manifests
+      volumes:
+        - name: k8s-manifests
+          persistentVolumeClaim:
+            claimName: {{ include "k8scrud.fullname" . }}
       affinity:
         podAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
