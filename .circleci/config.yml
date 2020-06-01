@@ -88,23 +88,26 @@ workflows:
     jobs:
       - build
       - release-docker-image:
-          branches:
-            only:
-              - master
+          filters:
+            branches:
+              only:
+                - master
           requires:
             - build
       - create-snapshot-docker-image:
-          branches:
-            ingore:
-              - master
+          filters:
+            branches:
+              ingore:
+                - master
           requires:
             - build
       - deploy-to-k8s:
           requires:
             - release-docker-image
       - release-new-version:
-          branches:
-            only:
-              - master
+          filters:
+            branches:
+              only:
+                - master
           requires:
             - deploy-to-k8s
