@@ -96,7 +96,7 @@ workflows:
       - create-snapshot-docker-image:
           filters:
             branches:
-              ingore: master
+              ignore: master
           requires:
             - build
       - deploy-to-k8s:
