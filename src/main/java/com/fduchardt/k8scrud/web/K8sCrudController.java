@@ -20,9 +20,19 @@ public class K8sCrudController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping(path="/{yaml}")
-    public K8sResponseDto apply(@PathVariable String yaml) throws IOException, InterruptedException {
-        return new K8sResponseDto(k8sDispatcher.apply(yaml));
+
+    @PostMapping(path="/{yaml}")
+    public K8sResponseDto create(@PathVariable String yaml) throws IOException, InterruptedException {
+        return new K8sResponseDto(k8sDispatcher.create(yaml));
+    }
+
+    @PutMapping(path="/{yaml}/{id}")
+    public K8sResponseDto replace(@PathVariable String yaml, @PathVariable String id, @RequestParam(required = false) String mode) throws IOException, InterruptedException {
+        if ("update".equals(mode)) {
+            return new K8sResponseDto(k8sDispatcher.apply(yaml, id));
+        } else {
+            return new K8sResponseDto(k8sDispatcher.replace(yaml, id));
+        }
     }
 
     @DeleteMapping(path="/{yaml}/{id}")
