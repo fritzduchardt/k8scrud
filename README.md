@@ -1,14 +1,15 @@
 # K8scrud (Create ,Replace, Update & Delete Kubernetes Manifests dynamically)
 
-K8scrud allows you to dynamically deploy or delete applications in your K8s cluster, triggered by REST-calls.
+K8scrud allows you to dynamically deploy or delete applications in your K8s cluster triggered by REST-calls.
 
 This project is intended both as a *proof-of-concept* for emulation as well as a *production-ready solution* that can be easily installed with kubectl or helm.
 
 ## How is it done?
 
-**In a nutshell**, K8scrud deploys a Pod with a web server and kubectl to your cluster. You transfer your K8s manifest to this pod. Now you can deploy or delete it dynamically by calling the web server with the name of the manifest.
+**In a nutshell:** K8scrud deploys a Pod with a web server with access to *kubectl* to your cluster. You transfer your K8s manifest to this Pod. Now you can deploy or delete this manifest at will by executing REST calls the web server passing it the name of the manifest.
 
-**More specifically**, K8scrud runs on 2 Pods to ensure availability. There use the same Persistent Volume for storage of K8s manifests. Due to limitations of some cloud providers with Binding PV from multiple nodes, they are configured to run on the same node.
+**More specifically:** K8scrud runs on 2 Pods to improve availability. Those use the same *Persistent Volume* for storage of K8s manifests. 
+
 You have the option to either install K8scrud into a singular namespace with RBAC rights only on that namespace or into the kube-system namespace with cluster admin rights.
 
 ## Installation

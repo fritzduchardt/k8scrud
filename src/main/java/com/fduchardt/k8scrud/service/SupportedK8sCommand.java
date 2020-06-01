@@ -7,7 +7,7 @@ import lombok.*;
 public enum SupportedK8sCommand {
 
     CREATE("kubectl create -f -"),
-    REPLACE("kubectl replace -f -"),
+    REPLACE("kubectl replace --force -f -"),
     APPLY("kubectl apply -f -"),
     DELETE("kubectl delete -f -");
 
