@@ -110,11 +110,11 @@ workflows:
       - build:
           filters:
             branches:
-              ignore: master
+              only: develop
       - create-snapshot-docker-image:
           filters:
             branches:
-              ignore: master
+              only: develop
           requires:
             - build
       - deploy-to-k8s:
