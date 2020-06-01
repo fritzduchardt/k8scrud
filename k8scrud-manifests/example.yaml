@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: nginx
-  name: nginx
+  name: nginx-{{ .K8scrud.id }}
   namespace: default
 spec:
   replicas: 1

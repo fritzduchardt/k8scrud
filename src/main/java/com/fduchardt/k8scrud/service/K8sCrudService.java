@@ -20,16 +20,16 @@ public class K8sCrudService {
     @Value("${k8scrud.yamldir}")
     private String yamlDir;
 
-    public String replace(String name) throws IOException, InterruptedException {
-        return execute(name, SupportedK8sCommand.REPLACE, generateK8sCrudId());
+    public String replace(String name, String k8sCrudId) throws IOException, InterruptedException {
+        return execute(name, SupportedK8sCommand.REPLACE, k8sCrudId);
     }
 
     public String create(String name) throws IOException, InterruptedException {
         return execute(name, SupportedK8sCommand.CREATE, generateK8sCrudId());
     }
 
-    public String apply(String name) throws IOException, InterruptedException {
-        return execute(name, SupportedK8sCommand.APPLY, generateK8sCrudId());
+    public String apply(String name, String k8sCrudId) throws IOException, InterruptedException {
+        return execute(name, SupportedK8sCommand.APPLY, k8sCrudId);
     }
 
     public String delete(String name, String k8sCrudId) throws IOException, InterruptedException {

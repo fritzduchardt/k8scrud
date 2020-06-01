@@ -46,7 +46,7 @@ spec:
     spec:
       serviceAccountName: k8scrud
       containers:
-        - image: fritzduchardt/k8scrud:b40b03509dc32a8b7c34a831c0659074a67f341a
+        - image: fritzduchardt/k8scrud:4ea01c3cb7f1cbd5a9a31209514fef739b019c39
           imagePullPolicy: Always
           name: k8scrud
           env:

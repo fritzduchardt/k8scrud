@@ -26,12 +26,12 @@ public class K8sCrudController {
         return new K8sResponseDto(k8sDispatcher.create(yaml));
     }
 
-    @PutMapping(path="/{yaml}")
-    public K8sResponseDto replace(@PathVariable String yaml, @RequestParam(required = false) String mode) throws IOException, InterruptedException {
+    @PutMapping(path="/{yaml}/{id}")
+    public K8sResponseDto replace(@PathVariable String yaml, @PathVariable String id, @RequestParam(required = false) String mode) throws IOException, InterruptedException {
         if ("apply".equals(mode)) {
-            return new K8sResponseDto(k8sDispatcher.apply(yaml));
+            return new K8sResponseDto(k8sDispatcher.apply(yaml, id));
         } else {
-            return new K8sResponseDto(k8sDispatcher.replace(yaml));
+            return new K8sResponseDto(k8sDispatcher.replace(yaml, id));
         }
     }
 
