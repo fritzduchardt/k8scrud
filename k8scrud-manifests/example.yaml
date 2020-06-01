@@ -25,7 +25,7 @@ kind: Service
 metadata:
   labels:
     app: nginx
-  name: nginx-{{ K8sCRUD.id }}
+  name: nginx-{{ .K8scrud.id }}
 spec:
   ports:
     - port: 8080
@@ -41,13 +41,13 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/rewrite-target: /
-  name: nginx-{{ K8sCRUD.id }}
+  name: nginx-{{ .K8scrud.id }}
 spec:
   rules:
     - http:
         paths:
-          - path: /{{ K8sCRUD.id }}
+          - path: /{{ .K8scrud.id }}
             backend:
-              serviceName: nginx-{{ K8sCRUD.id }}
+              serviceName: nginx-{{ .K8scrud.id }}
               servicePort: 8080
 

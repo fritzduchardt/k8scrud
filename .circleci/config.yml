@@ -26,7 +26,7 @@ jobs:
           paths:
             - ~/.gradle
 
-  publish-docker-image:
+  release-docker-image:
     docker:
       - image: docker
     steps:
@@ -41,6 +41,19 @@ jobs:
           docker tag fritzduchardt/k8scrud:latest fritzduchardt/k8scrud:$VERSION
           docker push fritzduchardt/k8scrud:$VERSION
           docker push fritzduchardt/k8scrud:latest
+
+  create-snapshot-docker-image:
+    docker:
+      - image: docker
+    steps:
+      - setup_remote_docker
+      - checkout
+      - attach_workspace:
+          at: build
+      - run: |
+          docker login -u fritzduchardt -p $DOCKER_HUB_PASSWORD
+          docker build -f Dockerfile-singlestage -t fritzduchardt/k8scrud:$CIRCLE_SHA1 .
+          docker push fritzduchardt/k8scrud:$CIRCLE_SHA1
 
   release-new-version:
     docker:
@@ -66,19 +79,32 @@ jobs:
       - kube-orb/install-kubeconfig:
           kubeconfig: KUBECONFIG_DATA
       - run: |
-          kubectl apply -f src/main/k8s-manifest/deploy-to-default-namespace.yaml
+          sed "s/k8scrud:latest/k8scrud:$CIRCLE_SHA1/g" src/main/k8s-manifest/deploy-to-default-namespace.yaml > k8s.yaml
+          kubectl apply -f k8s.yaml
 
 workflows:
   version: 2.1
   build_release_and_deploy:
     jobs:
       - build
-      - publish-docker-image:
+      - release-docker-image:
+          branches:
+            only:
+              - master
+          requires:
+            - build
+      - create-snapshot-docker-image:
+          branches:
+            ingore:
+              - master
           requires:
             - build
       - deploy-to-k8s:
           requires:
-            - publish-docker-image
+            - release-docker-image
       - release-new-version:
+          branches:
+            only:
+              - master
           requires:
             - deploy-to-k8s

@@ -15,10 +15,18 @@ import java.util.stream.*;
 @Slf4j
 public class K8sCrudService {
 
-    private static final String K8S_CRUD_ID = "\\{\\{ K8sCRUD.id \\}\\}";
+    private static final String K8S_CRUD_ID = "\\{\\{ .K8scrud.id \\}\\}";
 
     @Value("${k8scrud.yamldir}")
     private String yamlDir;
+
+    public String replace(String name) throws IOException, InterruptedException {
+        return execute(name, SupportedK8sCommand.REPLACE, generateK8sCrudId());
+    }
+
+    public String create(String name) throws IOException, InterruptedException {
+        return execute(name, SupportedK8sCommand.CREATE, generateK8sCrudId());
+    }
 
     public String apply(String name) throws IOException, InterruptedException {
         return execute(name, SupportedK8sCommand.APPLY, generateK8sCrudId());
