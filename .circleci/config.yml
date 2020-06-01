@@ -84,7 +84,7 @@ jobs:
 
 workflows:
   version: 2.1
-  build_release_and_deploy:
+  master-build:
     jobs:
       - build
       - release-docker-image:
@@ -93,6 +93,18 @@ workflows:
               only: master
           requires:
             - build
+      - deploy-to-k8s:
+          filters:
+            branches:
+              only: master
+          requires:
+            - release-docker-image
+      - release-new-version:
+          requires:
+            - deploy-to-k8s
+  branch-build:
+    jobs:
+      - build
       - create-snapshot-docker-image:
           filters:
             branches:
@@ -101,10 +113,5 @@ workflows:
             - build
       - deploy-to-k8s:
           requires:
-            - release-docker-image
-      - release-new-version:
-          filters:
-            branches:
-              only: master
-          requires:
-            - deploy-to-k8s
+            - create-snapshot-docker-image
+
