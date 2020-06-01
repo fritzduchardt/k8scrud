@@ -33,7 +33,7 @@ public class K8sCrudService {
     }
 
     public String delete(String name, String k8sCrudId) throws IOException, InterruptedException {
-        return execute(name, SupportedK8sCommand.APPLY, k8sCrudId);
+        return execute(name, SupportedK8sCommand.DELETE, k8sCrudId);
     }
 
     private String execute(String name, SupportedK8sCommand k8sCommand, String k8sCrudId) throws IOException, InterruptedException {

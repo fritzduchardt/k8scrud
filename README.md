@@ -20,6 +20,11 @@ Installation into the default namespace:
 ```shell script
 kubectl apply -f src/main/k8s-manifest/deploy-to-default-namespace.yaml
 ```
+Installation into kube-system namespace:
+```shell script
+kubectl apply -f src/main/k8s-manifest/deploy-to-kube-system.yaml
+```
+
 
 ### Installation with helm
 
@@ -38,23 +43,25 @@ helm install k8scrud ./src/main/helm/k8scrud --set serviceAccount.useClusterAdmi
 **Transfer your K8s manifest files to one of the K8scrud Pods**, e.g. for the provided example.yaml file:
 
 ```shell script
-K8SCRUD_POD=$(kubectl get pod -l app.kubernetes.io/name=k8scrud -o jsonpath="{.items[0].metadata.name}")
-kubectl cp k8scrud-manifests/example.yaml $K8SCRUD_POD:/k8s-manifests
+K8SCRUD_POD=$(kubectl get pod -n kube-system -l app.kubernetes.io/name=k8scrud -o jsonpath="{.items[0].metadata.name}")
+kubectl cp -n kube-system k8scrud-manifests/example.yaml $K8SCRUD_POD:/k8s-manifests
 ```
+**Warning:** make sure to change the namespace to where your installation namespace or kube-system if required.
 
 Please ensure that your manifest contains all K8s resources for your deployment in one file concatenated with "---"
 
 **Once the file is transferred, you can dynamically deploy it by calling the K8scrud REST endpoint**.
 
 ```shell script
-kubectl port-forward service/k8scrud 8080
-curl -X PUT localhost:8080/example
+kubectl port-forward service/k8scrud 8080 -n kube-system
+curl -v -X PUT localhost:8080/example
 ```
+**Warning:** make sure to change the namespace to where your installation namespace or kube-system if required.
 
 **The deployments can be dynamically deleted like this:**
 
 ```shell script
-curl -X DELETE localhost:8080/example
+curl -v -X DELETE localhost:8080/example
 ```
 
 ## Development
