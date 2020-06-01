@@ -28,7 +28,7 @@ public class K8sCrudController {
 
     @PutMapping(path="/{yaml}/{id}")
     public K8sResponseDto replace(@PathVariable String yaml, @PathVariable String id, @RequestParam(required = false) String mode) throws IOException, InterruptedException {
-        if ("apply".equals(mode)) {
+        if ("update".equals(mode)) {
             return new K8sResponseDto(k8sDispatcher.apply(yaml, id));
         } else {
             return new K8sResponseDto(k8sDispatcher.replace(yaml, id));
