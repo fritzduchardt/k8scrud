@@ -13,7 +13,7 @@ import java.io.*;
 @Slf4j
 public class K8sCrudController {
 
-    private final K8sCrudService k8sCrudService;
+    private final K8sCrudService k8sCrudService ;
 
     @GetMapping(path="/health")
     public ResponseEntity health() {

@@ -31,6 +31,10 @@ dependencies {
     }
 }
 
+release {
+    preCommitText = "[skip ci]"
+}
+
 test {
     useJUnitPlatform()
 }

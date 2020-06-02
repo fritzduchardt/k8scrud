@@ -53,7 +53,6 @@ jobs:
           VERSION=$(cat build/version.txt)
           git config --global user.email "fritz@duchardt.net"
           git config --global user.name "Fritz Duchardt"
-          git tag -d $VERSION &
           ./gradlew release -Prelease.useAutomaticVersion=true
 
   deploy-to-k8s:
