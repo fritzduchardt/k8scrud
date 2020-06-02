@@ -1,4 +1,4 @@
-# K8scrud (Create ,Replace, Update & Delete Kubernetes Manifests dynamically)
+# K8scrud (Create, Replace, Update & Delete Kubernetes Manifests dynamically)
 
 K8scrud allows you to dynamically deploy or delete applications in your K8s cluster, triggered by REST-calls.
 
