@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx-{{ .K8scrud.id }}
+  name: nginx-{{ .K8scrud.id }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-{{ .K8scrud.id }}
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: nginx-{{ .K8scrud.id }}
+    spec:
+      containers:
+        - image: nginx
+          name: nginx
+          resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nginx-{{ .K8scrud.id }}
+  name: nginx-{{ .K8scrud.id }}
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: nginx-{{ .K8scrud.id }}
+  type: ClusterIP
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: nginx-{{ .K8scrud.id }}
+spec:
+  gateways:
+    - {{ .K8scrud.params.istioGateway }}
+  hosts:
+    - {{ .K8scrud.params.domainName }}
+  http:
+    - match:
+        - uri:
+            prefix: /{{ .K8scrud.id }}
+      rewrite:
+        uri: "/"
+      route:
+        - destination:
+            host: nginx-{{ .K8scrud.id }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: nginx-destination-rule
+spec:
+  host: nginx-{{ .K8scrud.id }}
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+  subsets:
+    - name: v1
+      labels:
+        app: nginx-{{ .K8scrud.id }}

@@ -7,6 +7,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
+import java.util.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,22 +23,22 @@ public class K8sCrudController {
 
 
     @PostMapping(path="/{yaml}")
-    public K8sResponseDto create(@PathVariable String yaml) throws IOException, InterruptedException {
-        return new K8sResponseDto(k8sCrudService.create(yaml));
+    public K8sResponseDto create(@PathVariable String yaml, @RequestBody(required = false) Map<String, String> params) throws IOException, InterruptedException {
+        return new K8sResponseDto(k8sCrudService.create(yaml, params));
     }
 
     @PutMapping(path="/{yaml}/{id}")
-    public K8sResponseDto replace(@PathVariable String yaml, @PathVariable String id, @RequestParam(required = false) String mode) throws IOException, InterruptedException {
+    public K8sResponseDto replace(@PathVariable String yaml, @PathVariable String id, @RequestParam(required = false) String mode, @RequestBody(required = false) Map<String, String> params) throws IOException, InterruptedException {
         if ("update".equals(mode)) {
-            return new K8sResponseDto(k8sCrudService.apply(yaml, id));
+            return new K8sResponseDto(k8sCrudService.apply(yaml, id, params));
         } else {
-            return new K8sResponseDto(k8sCrudService.replace(yaml, id));
+            return new K8sResponseDto(k8sCrudService.replace(yaml, id, params));
         }
     }
 
     @DeleteMapping(path="/{yaml}/{id}")
-    public K8sResponseDto delete(@PathVariable String yaml, @PathVariable String id) throws IOException, InterruptedException {
-        return new K8sResponseDto(k8sCrudService.delete(yaml, id));
+    public K8sResponseDto delete(@PathVariable String yaml, @PathVariable String id, @RequestBody(required = false) Map<String, String> params) throws IOException, InterruptedException {
+        return new K8sResponseDto(k8sCrudService.delete(yaml, id, params));
     }
 
 }

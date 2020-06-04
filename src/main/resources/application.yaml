@@ -4,4 +4,4 @@ logging:
     com.fduchardt: INFO
 
 k8scrud:
-  yamldir: k8s-manifests
+  yamldir: k8scrud-manifests
