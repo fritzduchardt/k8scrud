@@ -23,8 +23,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseBody
     @SuppressWarnings("unused")
     private K8sResponseDto handleInternalServerError(K8sCrudException e) {
-        log.error("K8sCrud Exception", e);
-        return new K8sResponseDto(e.getMessage(), e.getK8sCrudId(), e.getCommand());
+        log.error("K8sCrud Exception for k8scrudId: {} and command: {}", e.getK8sCrudId(), e.getCommand(), e);
+        return new K8sResponseDto(e.getMessage(), e.getK8sCrudId());
     }
 
     @ExceptionHandler(RuntimeException.class)

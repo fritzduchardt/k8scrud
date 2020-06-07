@@ -1,13 +1,19 @@
 package com.fduchardt.k8scrud.service;
 
 import lombok.*;
-import lombok.experimental.*;
 
-@Data
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class K8sResponseDto {
-    String message;
-    String k8sCrudId;
-    String[] command;
+    private final String message;
+    private final String k8sCrudId;
+    private String[] command;
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getK8sCrudId() {
+        return k8sCrudId;
+    }
 }
