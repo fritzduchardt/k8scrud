@@ -45,7 +45,7 @@ metadata:
   name: k8scrud
   namespace: default
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: k8scrud
@@ -61,6 +61,18 @@ spec:
         - image: fritzduchardt/k8scrud:latest
           imagePullPolicy: Always
           name: k8scrud
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
           env:
             - name: "k8scrud.yamldir"
               value: "/"

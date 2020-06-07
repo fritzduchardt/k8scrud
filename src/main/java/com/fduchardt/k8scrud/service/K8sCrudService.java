@@ -1,5 +1,6 @@
 package com.fduchardt.k8scrud.service;
 
+import com.fduchardt.k8scrud.exception.*;
 import lombok.extern.slf4j.*;
 import org.apache.commons.io.*;
 import org.springframework.beans.factory.annotation.*;
@@ -45,19 +46,19 @@ public class K8sCrudService {
 
         log.debug("Execute command:\n{}", Stream.of(command).collect(Collectors.joining(" ")));
 
-        Process p = executeCommand(command);
+        Process process = executeCommand(command);
 
-        p.waitFor();
+        process.waitFor();
 
-        assertError(command, p);
+        assertError(command, process, k8sCrudId);
 
-        Optional<String> answer = readAnswer(p);
+        Optional<String> answer = readAnswer(process);
 
         if (answer.isEmpty()) {
-            throw new RuntimeException("No response for command:\n" + command);
+            throw new K8sCrudException(k8sCrudId, "No response", command);
         }
 
-        return new K8sResponseDto(answer.get(), k8sCrudId);
+        return new K8sResponseDto(answer.get(), k8sCrudId, command);
     }
 
     private Process executeCommand(String[] command) throws IOException {
@@ -91,10 +92,10 @@ public class K8sCrudService {
         return k8sCrudId;
     }
 
-    private void assertError(String[] command, Process p) throws IOException {
+    private void assertError(String[] command, Process p, String k8sCrudId) throws IOException {
         try (InputStream is = p.getErrorStream()) {
             if (is != null && is.available() > 0) {
-                throw new RuntimeException("Error during execution: " + IOUtils.toString(is, StandardCharsets.UTF_8) + " on command:\n" + command);
+                throw new K8sCrudException(k8sCrudId, IOUtils.toString(is, StandardCharsets.UTF_8), command);
             }
         }
     }

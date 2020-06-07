@@ -9,4 +9,5 @@ import lombok.experimental.*;
 public class K8sResponseDto {
     String message;
     String k8sCrudId;
+    String[] command;
 }

@@ -1,5 +1,7 @@
 package com.fduchardt.k8scrud.web;
 
+import com.fduchardt.k8scrud.exception.*;
+import com.fduchardt.k8scrud.service.*;
 import lombok.extern.slf4j.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @SuppressWarnings("unused")
     private void handleIllegalArgumentException(IllegalArgumentException e) {
         log.debug("Controller called with illegal argument", e);
+    }
+
+    @ExceptionHandler(K8sCrudException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    @SuppressWarnings("unused")
+    private K8sResponseDto handleInternalServerError(K8sCrudException e) {
+        log.error("K8sCrud Exception", e);
+        return new K8sResponseDto(e.getMessage(), e.getK8sCrudId(), e.getCommand());
     }
 
     @ExceptionHandler(RuntimeException.class)
