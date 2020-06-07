@@ -26,7 +26,7 @@ kubectl apply -f src/main/k8s-manifest/deploy-to-default-namespace.yaml
 Installation into the default namespace:
 
 ```shell script
-helm install k8scrud ./src/main/helm/k8scrud --debug --set-string namespace=default 
+helm install k8scrud ./src/main/helm/k8scrud --set-string namespace=default 
 ```
 
 Installation into kube-system with cluster admin rights:

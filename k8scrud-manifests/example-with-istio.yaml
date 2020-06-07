@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: nginx-{{ .K8scrud.id }}
+    name: k8scrud-example-nginx
   name: nginx-{{ .K8scrud.id }}
   namespace: default
 spec:
@@ -15,6 +16,7 @@ spec:
     metadata:
       labels:
         app: nginx-{{ .K8scrud.id }}
+        name: k8scrud-example-nginx
     spec:
       containers:
         - image: nginx
@@ -26,6 +28,7 @@ kind: Service
 metadata:
   labels:
     app: nginx-{{ .K8scrud.id }}
+    name: k8scrud-example-nginx
   name: nginx-{{ .K8scrud.id }}
   namespace: default
 spec:
@@ -42,6 +45,9 @@ kind: VirtualService
 metadata:
   name: nginx-{{ .K8scrud.id }}
   namespace: default
+  labels:
+    app: nginx-{{ .K8scrud.id }}
+    name: k8scrud-example-nginx
 spec:
   gateways:
     - {{ .K8scrud.params.istioGateway }}
@@ -63,6 +69,9 @@ kind: DestinationRule
 metadata:
   name: nginx-destination-rule-{{ .K8scrud.id }}
   namespace: default
+  labels:
+    app: nginx-{{ .K8scrud.id }}
+    name: k8scrud-example-nginx
 spec:
   host: nginx-{{ .K8scrud.id }}
   trafficPolicy:
