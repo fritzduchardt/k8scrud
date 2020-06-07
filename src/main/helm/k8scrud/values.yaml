@@ -9,7 +9,7 @@ image:
   # make IfNotPresent
   pullPolicy: Always
   # Overrides the image tag whose default is the chart version.
-  tag: "0.0.1"
+  tag: "latest"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -40,7 +40,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 80
+  port: 8080
 
 
 resources: {}

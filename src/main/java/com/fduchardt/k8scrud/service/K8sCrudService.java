@@ -21,23 +21,23 @@ public class K8sCrudService {
     @Value("${k8scrud.yamldir}")
     private String yamlDir;
 
-    public String replace(String name, String k8sCrudId, Map<String, String> params) throws IOException, InterruptedException {
+    public K8sResponseDto replace(String name, String k8sCrudId, Map<String, String> params) throws IOException, InterruptedException {
         return execute(name, SupportedK8sCommand.REPLACE, k8sCrudId, params);
     }
 
-    public String create(String name, Map<String, String> params) throws IOException, InterruptedException {
+    public K8sResponseDto create(String name, Map<String, String> params) throws IOException, InterruptedException {
         return execute(name, SupportedK8sCommand.CREATE, generateK8sCrudId(), params);
     }
 
-    public String apply(String name, String k8sCrudId, Map<String, String> params) throws IOException, InterruptedException {
+    public K8sResponseDto apply(String name, String k8sCrudId, Map<String, String> params) throws IOException, InterruptedException {
         return execute(name, SupportedK8sCommand.APPLY, k8sCrudId, params);
     }
 
-    public String delete(String name, String k8sCrudId, Map<String, String> params) throws IOException, InterruptedException {
+    public K8sResponseDto delete(String name, String k8sCrudId, Map<String, String> params) throws IOException, InterruptedException {
         return execute(name, SupportedK8sCommand.DELETE, k8sCrudId, params);
     }
 
-    private String execute(String name, SupportedK8sCommand k8sCommand, String k8sCrudId, Map<String, String> params) throws IOException, InterruptedException {
+    private K8sResponseDto execute(String name, SupportedK8sCommand k8sCommand, String k8sCrudId, Map<String, String> params) throws IOException, InterruptedException {
 
         String yaml = loadYaml(name, k8sCrudId, params);
 
@@ -57,7 +57,7 @@ public class K8sCrudService {
             throw new RuntimeException("No response for command:\n" + command);
         }
 
-        return answer.get();
+        return new K8sResponseDto(answer.get(), k8sCrudId);
     }
 
     private Process executeCommand(String[] command) throws IOException {

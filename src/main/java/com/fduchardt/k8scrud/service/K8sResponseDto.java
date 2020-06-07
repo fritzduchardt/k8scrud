@@ -1,4 +1,4 @@
-package com.fduchardt.k8scrud.web;
+package com.fduchardt.k8scrud.service;
 
 import lombok.*;
 import lombok.experimental.*;
@@ -8,4 +8,5 @@ import lombok.experimental.*;
 @RequiredArgsConstructor
 public class K8sResponseDto {
     String message;
+    String k8sCrudId;
 }

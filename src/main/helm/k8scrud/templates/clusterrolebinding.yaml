@@ -7,6 +7,7 @@ metadata:
         {{- include "k8scrud.labels" . | nindent 4 }}
 subjects:
   - kind: ServiceAccount
+    {{ include "k8scrud.namespace" . }}
     name: {{ include "k8scrud.serviceAccountName" . }}
 roleRef:
   kind: ClusterRole

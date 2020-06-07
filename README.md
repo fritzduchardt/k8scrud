@@ -39,7 +39,7 @@ helm install k8scrud ./k8scrud --set serviceAccount.useClusterAdminRole=true
 
 ```shell script
 K8SCRUD_POD=$(kubectl get pod -l app.kubernetes.io/name=k8scrud -o jsonpath="{.items[0].metadata.name}")
-kubectl cp k8scrud-manifests/example.yaml $K8SCRUD_POD:/k8s-manifests
+kubectl cp k8scrud-manifests/example-with-ingress.yaml $K8SCRUD_POD:/k8scrud-manifests
 ```
 
 Please ensure that your manifest contains all K8s resources for your deployment in one file concatenated with "---"

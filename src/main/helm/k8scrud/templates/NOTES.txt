@@ -2,19 +2,28 @@ K8scrud was successfully deployed to the "{{ .Values.namespace }}" namespace of 
 
 Now, transfer your K8s manifest files to K8scrud, e.g. for the provided example.yaml file:
 
-K8SCRUD_POD=$(kubectl get pod -l app.kubernetes.io/name=k8scrud -o jsonpath="{.items[0].metadata.name}")
-kubectl cp k8scrud-manifests/example.yaml $K8SCRUD_POD:/k8s-manifests
+K8SCRUD_POD=$(kubectl get pod -n {{ include "k8scrud.namespaceOnly" . }} -l app.kubernetes.io/name=k8scrud -o jsonpath="{.items[0].metadata.name}")
+
+Wait until the K8scrud Pods are running. This can take a couple of seconds, since a Persistent Volume needs to get provisioned:
+
+kubectl get po $K8SCRUD_POD -n {{ include "k8scrud.namespaceOnly" . }} -w
+
+Once the Pod Status is "READY 1/1", copy your manifest(s), e.g.:
+
+kubectl cp -n {{ include "k8scrud.namespaceOnly" . }}  k8scrud-manifests/example-with-ingress.yaml $K8SCRUD_POD:/k8scrud-manifests
 
 Please ensure that your manifest contains all K8s resources for your deployment in one file concatenated with "---"
 
 Once the file is transferred, you can dynamically deploy it by calling the K8scrud REST endpoint.
 
-kubectl port-forward service/k8scrud 8080
-curl -X PUT localhost:8080/example
+kubectl port-forward  -n {{ include "k8scrud.namespaceOnly" . }} service/k8scrud 8080
+curl -v -X POST localhost:8080/example-with-ingress
+
+Now, a dynamic deployment has been made. The deployment id can be taken from the
 
 Deployments can be dynamically deleted like this:
 
-curl -X DELETE localhost:8080/example
+curl -v -X DELETE localhost:8080/example-with-ingress/[]
 
 
 

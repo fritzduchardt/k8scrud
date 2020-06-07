@@ -53,10 +53,10 @@ spec:
             - name: "k8scrud.yamldir"
               value: "/"
           volumeMounts:
-            - mountPath: /k8s-manifests
-              name: k8s-manifests
+            - mountPath: /k8scrud-manifests
+              name: k8scrud-manifests
       volumes:
-        - name: k8s-manifests
+        - name: k8scrud-manifests
           persistentVolumeClaim:
             claimName: k8scrud
       affinity:

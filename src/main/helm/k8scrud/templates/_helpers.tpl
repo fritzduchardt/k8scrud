@@ -73,3 +73,14 @@ Create the name of the namespace to use
 {{- end }}
 {{- end }}
 
+{{/*
+Create the name of the namespace to use
+*/}}
+{{- define "k8scrud.namespaceOnly" -}}
+{{- if .Values.serviceAccount.useClusterAdminRole }}
+{{- "kube-system" }}
+{{- else }}
+{{ .Values.namespace }}
+{{- end }}
+{{- end }}
+
