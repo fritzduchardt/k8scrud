@@ -75,8 +75,13 @@ public class K8sCrudService {
         return Optional.empty();
     }
 
-    private String loadYaml(String yamlName, String k8sCrudId, Map<String, String> params) throws IOException {
-        String yaml = Files.readString(Path.of(String.format("%s/%s.yaml", yamlDir, yamlName)));
+    private String loadYaml(String yamlName, String k8sCrudId, Map<String, String> params) {
+        String yaml;
+        try {
+            yaml = Files.readString(Path.of(String.format("%s/%s.yaml", yamlDir, yamlName)));
+        } catch (IOException e) {
+            throw new K8sCrudException(k8sCrudId, "Manifest not found: " + yamlName);
+        }
         yaml = yaml.replaceAll(K8S_CRUD_ID, k8sCrudId);
         if (params != null) {
             for (String key : params.keySet()) {
