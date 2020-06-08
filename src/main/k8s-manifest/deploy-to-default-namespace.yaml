@@ -74,8 +74,8 @@ spec:
               path: /health
               port: 8080
           env:
-            - name: "k8scrud.yamldir"
-              value: "/"
+            - name: SPRING_PROFILES_ACTIVE
+              value: production
           volumeMounts:
             - mountPath: k8scrud-manifests
               name: k8scrud-manifests

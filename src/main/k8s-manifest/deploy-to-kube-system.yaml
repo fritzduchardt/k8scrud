@@ -46,7 +46,7 @@ spec:
     spec:
       serviceAccountName: k8scrud
       containers:
-        - image: fritzduchardt/k8scrud:a24ead2983fa41a2d4f77b79f1f80a8bb1f82e35
+        - image: fritzduchardt/k8scrud:latest
           imagePullPolicy: Always
           name: k8scrud
           ports:
@@ -62,8 +62,8 @@ spec:
               path: /health
               port: 8080
           env:
-            - name: "k8scrud.yamldir"
-              value: "/"
+            - name: SPRING_PROFILES_ACTIVE
+              value: production
           volumeMounts:
             - mountPath: /k8scrud-manifests
               name: k8scrud-manifests
