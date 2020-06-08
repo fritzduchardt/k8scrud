@@ -1,7 +1,2 @@
-
-logging:
-  level:
-    com.fduchardt: INFO
-
 k8scrud:
   yamldir: k8scrud-manifests

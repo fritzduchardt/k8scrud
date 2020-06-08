@@ -1,5 +1,4 @@
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <appender name="jsonAppender" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <fieldNames>
