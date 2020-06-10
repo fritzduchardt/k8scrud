@@ -10,7 +10,6 @@ import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.stream.*;
 
 @Component
 @Slf4j
@@ -23,18 +22,22 @@ public class K8sCrudService {
     private String yamlDir;
 
     public K8sResponseDto replace(String name, String k8sCrudId, Map<String, String> params) throws IOException, InterruptedException {
+        log.info("K8s replace: {} with id: {}", name, k8sCrudId);
         return execute(name, SupportedK8sCommand.REPLACE, k8sCrudId, params);
     }
 
     public K8sResponseDto create(String name, Map<String, String> params) throws IOException, InterruptedException {
+        log.info("K8s create: {}", name);
         return execute(name, SupportedK8sCommand.CREATE, generateK8sCrudId(), params);
     }
 
     public K8sResponseDto apply(String name, String k8sCrudId, Map<String, String> params) throws IOException, InterruptedException {
+        log.info("K8s apply: {} with id: {}", name, k8sCrudId);
         return execute(name, SupportedK8sCommand.APPLY, k8sCrudId, params);
     }
 
     public K8sResponseDto delete(String name, String k8sCrudId, Map<String, String> params) throws IOException, InterruptedException {
+        log.info("K8s delete: {} with id: {}", name, k8sCrudId);
         return execute(name, SupportedK8sCommand.DELETE, k8sCrudId, params);
     }
 
@@ -44,7 +47,7 @@ public class K8sCrudService {
 
         String[] command = buildCommand(k8sCommand, yaml);
 
-        log.debug("Execute command:\n{}", Stream.of(command).collect(Collectors.joining(" ")));
+//        log.debug("Execute command:\n{}", Stream.of(command).collect(Collectors.joining(" ")));
 
         Process process = executeCommand(command);
 
@@ -62,7 +65,6 @@ public class K8sCrudService {
     }
 
     private Process executeCommand(String[] command) throws IOException {
-        log.info("Execute command:\n{}", String.join(" ", command));
         return Runtime.getRuntime().exec(command);
     }
 
@@ -93,7 +95,7 @@ public class K8sCrudService {
 
     private String generateK8sCrudId() {
         String k8sCrudId = UUID.randomUUID().toString();
-        log.info("K8sCrudId: {}", k8sCrudId);
+        log.info("Generated K8sCrud-Id: {}", k8sCrudId);
         return k8sCrudId;
     }
 
