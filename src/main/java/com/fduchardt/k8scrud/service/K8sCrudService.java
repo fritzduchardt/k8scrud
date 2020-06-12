@@ -17,7 +17,6 @@ import java.util.stream.*;
 @Slf4j
 public class K8sCrudService {
 
-    private static final String ID_PREFIX = "k8scrud-";
     private static final String K8S_CRUD_ID = "\\{\\{ .K8scrud.id \\}\\}";
     private static final String K8S_CRUD_PARAM_PREFIX = "\\{\\{ .K8scrud.params.%s \\}\\}";
 
@@ -97,7 +96,7 @@ public class K8sCrudService {
     }
 
     private String generateK8sCrudId() {
-        String k8sCrudId = ID_PREFIX + RandomStringUtils.randomAlphanumeric(8).toLowerCase();
+        String k8sCrudId = RandomStringUtils.randomAlphanumeric(8).toLowerCase();
         log.info("Generated K8sCrud-Id: {}", k8sCrudId);
         return k8sCrudId;
     }

@@ -69,9 +69,8 @@ spec:
               name: k8scrud-manifests
       volumes:
         - name: k8scrud-manifests
-          emptyDir: {}
-#          persistentVolumeClaim:
-#            claimName: k8scrud
+          persistentVolumeClaim:
+            claimName: k8scrud
       affinity:
         podAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
