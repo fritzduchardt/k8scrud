@@ -13,4 +13,6 @@ management:
       exposure:
         include: health, prometheus
       base-path: /
+  server:
+    port: 9090
 
