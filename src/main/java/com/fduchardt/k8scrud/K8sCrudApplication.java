@@ -5,11 +5,9 @@ import lombok.extern.slf4j.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
-import org.springframework.scheduling.annotation.*;
 
 @Slf4j
 @SpringBootApplication
-@EnableScheduling
 public class K8sCrudApplication {
 
     @Autowired

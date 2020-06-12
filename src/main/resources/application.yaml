@@ -1,2 +1,16 @@
 k8scrud:
   yamldir: k8scrud-manifests
+
+management:
+  endpoint:
+    health:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: health, prometheus
+      base-path: /
+

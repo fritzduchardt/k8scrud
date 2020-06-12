@@ -3,6 +3,7 @@ package com.fduchardt.k8scrud.service;
 import com.fduchardt.k8scrud.exception.*;
 import lombok.extern.slf4j.*;
 import org.apache.commons.io.*;
+import org.apache.commons.lang.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
@@ -10,11 +11,13 @@ import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.stream.*;
 
 @Component
 @Slf4j
 public class K8sCrudService {
 
+    private static final String ID_PREFIX = "k8scrud-";
     private static final String K8S_CRUD_ID = "\\{\\{ .K8scrud.id \\}\\}";
     private static final String K8S_CRUD_PARAM_PREFIX = "\\{\\{ .K8scrud.params.%s \\}\\}";
 
@@ -47,7 +50,7 @@ public class K8sCrudService {
 
         String[] command = buildCommand(k8sCommand, yaml);
 
-//        log.debug("Execute command:\n{}", Stream.of(command).collect(Collectors.joining(" ")));
+        log.debug("Execute command:\n{}", Stream.of(command).collect(Collectors.joining(" ")));
 
         Process process = executeCommand(command);
 
@@ -94,7 +97,7 @@ public class K8sCrudService {
     }
 
     private String generateK8sCrudId() {
-        String k8sCrudId = UUID.randomUUID().toString();
+        String k8sCrudId = ID_PREFIX + RandomStringUtils.randomAlphanumeric(8).toLowerCase();
         log.info("Generated K8sCrud-Id: {}", k8sCrudId);
         return k8sCrudId;
     }

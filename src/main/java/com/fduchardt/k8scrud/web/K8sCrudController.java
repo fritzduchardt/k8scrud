@@ -3,7 +3,6 @@ package com.fduchardt.k8scrud.web;
 import com.fduchardt.k8scrud.service.*;
 import lombok.*;
 import lombok.extern.slf4j.*;
-import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
@@ -15,12 +14,6 @@ import java.util.*;
 public class K8sCrudController {
 
     private final K8sCrudService k8sCrudService ;
-
-    @GetMapping(path="/health")
-    public ResponseEntity health() {
-        return ResponseEntity.ok().build();
-    }
-
 
     @PostMapping(path="/{yaml}")
     public K8sResponseDto create(@PathVariable String yaml, @RequestBody(required = false) Map<String, String> params) throws IOException, InterruptedException {
