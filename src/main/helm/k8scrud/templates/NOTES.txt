@@ -23,7 +23,7 @@ Please ensure that your manifest contains all K8s resources for your deployment 
 
 MAKE DYNAMIC DEPLOYMENTS
 
-Once your manifest file is transferred, you can dynamically deploy it by calling the K8scrud REST endpoint and stating the name of the file.
+Once your manifest file is transferred, you can dynamically deploy it by calling the K8scrud REST endpoint while stating the name of the file without suffix.
 
 # Open a connection to K8scrud from your local machine
 kubectl port-forward  -n {{ include "k8scrud.namespaceName" . }} service/k8scrud 8080

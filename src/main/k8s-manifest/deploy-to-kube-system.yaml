@@ -102,7 +102,7 @@ metadata:
   annotations:
     prometheus.io/scrape: 'true'
     prometheus.io/path: /prometheus
-    prometheus.io/port: "9090"
+    prometheus.io/port: '9090'
   labels:
     app.kubernetes.io/name: k8scrud
     app.kubernetes.io/instance: k8scrud

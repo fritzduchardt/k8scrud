@@ -1,6 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
+{{- with .Values.service.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
   {{- include "k8scrud.namespace" . | nindent 2 }}
   name: {{ include "k8scrud.fullname" . }}
   labels:
