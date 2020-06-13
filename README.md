@@ -62,7 +62,7 @@ Transfer your K8s manifest files to K8scrud, e.g. for the provided example-with-
 K8SCRUD_POD=$(kubectl get pod -n default -l app.kubernetes.io/name=k8scrud -o jsonpath="{.items[0].metadata.name}")
 
 # Copy your K8s manifest to the K8scrud Pod into the "k8scrud-manifests" folder
-kubectl cp -n default  k8scrud-manifests/example-with-ingress.yaml $K8SCRUD_POD:/k8scrud-manifests
+kubectl cp -n default  k8scrud-manifests/example.yaml $K8SCRUD_POD:/k8scrud-manifests
 ```
 
 **Please ensure that your manifest contains all K8s resources for your deployment in one file concatenated with "---"**
@@ -73,11 +73,14 @@ Once your manifest file is transferred, you can dynamically deploy it by calling
 
 ```shell script
 # Open a connection to K8scrud from your local machine
-kubectl port-forward  -n default service/k8scrud 8080
+kubectl port-forward -n default service/k8scrud 8080
 
 # Call the K8scrud REST endpoint for dynamic deployment creation
-curl -v -X POST localhost:8080/example-with-ingress
+curl -v -H Content-Type:application/json -X POST localhost:8080/example --data '{"yourEnvValue": "some-value"}'
 ```
+
+In the request payload you can specify parameters that will be swapped out for placeholders in your manifests, e.g. *{{ .K8scrud.params.yourEnvValue }}*
+Also, every deployment will generate a K8scrud deployment Id that can also be swapped out for a placeholder in the manifest: *{{ .K8scrud.id }}*
 
 **Now, a dynamic deployment has been made**. The **deployment id** can be taken from the response body JSON from the key "k8sCrudId".
 
@@ -96,7 +99,7 @@ Deployments can be dynamically deleted like this:
 
 ```shell script
 # Call the K8scrud REST endpoint for dynamic deployment deletion
-curl -v -X DELETE localhost:8080/example-with-ingress/[k8sCrudId-of-your-deployment]
+curl -v -X DELETE localhost:8080/example/[k8sCrudId-of-your-deployment]
 ```
 
 Enjoy! If you questions or feature requests, **please contact fritz@duchardt.net**

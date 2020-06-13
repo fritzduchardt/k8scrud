@@ -3,6 +3,7 @@ package com.fduchardt.k8scrud.web;
 import com.fduchardt.k8scrud.service.*;
 import lombok.*;
 import lombok.extern.slf4j.*;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;

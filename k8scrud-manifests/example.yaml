@@ -41,23 +41,3 @@ spec:
   selector:
     app: nginx-{{ .K8scrud.id }}
   type: ClusterIP
----
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/rewrite-target: /
-  name: nginx-{{ .K8scrud.id }}
-  namespace: default
-  labels:
-    app: nginx-{{ .K8scrud.id }}
-    app.kubernetes.io/name: k8scrud-example-nginx
-spec:
-  rules:
-    - http:
-        paths:
-          - path: /{{ .K8scrud.id }}
-            backend:
-              serviceName: nginx-{{ .K8scrud.id }}
-              servicePort: 8080
