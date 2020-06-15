@@ -30,8 +30,8 @@ kubectl port-forward  -n {{ include "k8scrud.namespaceName" . }} service/k8scrud
 # Call the K8scrud REST endpoint for dynamic deployment creation
 curl -v -H 'Content-Type:application/json' -X POST --data '{"yourEnvValue": "some-value"}' localhost:8080/example
 
-In the request payload you can specify parameters that will be swapped out for placeholders in your manifests, e.g. {{ .K8scrud.params.yourEnvValue }}
-Also, every deployment will generate a K8scrud deployment Id that can also be swapped out for a placeholder in the manifest: {{ .K8scrud.id }}
+In the request payload you can specify parameters that will be swapped out for placeholders in your manifests, e.g. '\{\{ .K8scrud.params.yourEnvValue \}\}'
+Also, every deployment will generate a K8scrud deployment Id that can also be swapped out for a placeholder in the manifest: '\{\{ .K8scrud.id \}\}'
 
 Now, a dynamic deployment has been made. The deployment id can be taken from the response body JSON from the key "k8sCrudId".
 
