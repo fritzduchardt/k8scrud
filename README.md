@@ -29,7 +29,7 @@ kubectl apply -f src/main/k8s-manifest/deploy-to-kube-system.yaml
 
 Both installations are preconfigured to report metrics to [Prometheus](https://prometheus.io/)
 
-### Installation with helm
+### Installation with Helm
 
 Installation into the default namespace:
 
