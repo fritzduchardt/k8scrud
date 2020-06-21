@@ -57,6 +57,23 @@ spec:
         app.kubernetes.io/instance: k8scrud
     spec:
       serviceAccountName: k8scrud
+      initContainers:
+        - image: fritzduchardt/nginx-environment-configurator:latest
+          name: nginx-environment-configurator
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: "/work-dir"
+          env:
+            - name: NGINX_CONFIG_PATH
+              value: "/work-dir/default.conf"
+            - name: LOCATION_1
+              value: "/"
+            - name: PROXYPATH_1
+              value: "http://localhost:8080/"
+            - name: LOCATION_2
+              value: "/swagger"
+            - name: PROXYPATH_2
+              value: "http://localhost:8081/"
       containers:
         - image: fritzduchardt/k8scrud:latest
           imagePullPolicy: Always
@@ -74,12 +91,35 @@ spec:
               path: /health
               port: 9090
           env:
+            - name: server.port
+              value: "8081"
             - name: SPRING_PROFILES_ACTIVE
               value: production
+        - image: swaggerapi/swagger-ui:latest
+          imagePullPolicy: IfNotPresent
+          name: swaggerapi
+          ports:
+            - name: http
+              containerPort: 8081
+              protocol: TCP
+          env:
+            - name: PORT
+              value: "8081"
+            - name: SWAGGER_JSON_URL
+              value: http://localhost:8080/v2/api-docs
+        - image: nginx:latest
+          imagePullPolicy: IfNotPresent
+          name: nginx
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
           volumeMounts:
-            - mountPath: k8scrud-manifests
-              name: k8scrud-manifests
+            - mountPath: /etc/nginx/conf.d/
+              name: nginx-conf
       volumes:
+        - name: nginx-conf
+          emptyDir: {}
         - name: k8scrud-manifests
           persistentVolumeClaim:
             claimName: k8scrud
@@ -119,7 +159,7 @@ spec:
   ports:
     - port: 8080
       protocol: TCP
-      targetPort: 8080
+      targetPort: 80
   selector:
     app.kubernetes.io/name: k8scrud
   type: ClusterIP
