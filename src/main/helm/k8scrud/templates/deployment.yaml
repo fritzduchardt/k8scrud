@@ -26,6 +26,23 @@ spec:
       serviceAccountName: {{ include "k8scrud.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - image: fritzduchardt/nginx-environment-configurator:latest
+          name: nginx-environment-configurator
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: "/work-dir"
+          env:
+            - name: NGINX_CONFIG_PATH
+              value: "/work-dir/default.conf"
+            - name: LOCATION_1
+              value: "/"
+            - name: PROXYPASS_1
+              value: "http://localhost:8080/"
+            - name: LOCATION_2
+              value: "/swagger"
+            - name: PROXYPASS_2
+              value: "http://localhost:8081/"
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -52,10 +69,35 @@ spec:
               port: 9090
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+        - image: swaggerapi/swagger-ui:latest
+          imagePullPolicy: IfNotPresent
+          name: swaggerapi
+          ports:
+            - name: http
+              containerPort: 8081
+              protocol: TCP
+          env:
+            - name: PORT
+              value: "8081"
+            - name: SWAGGER_JSON_URL
+              value: http://localhost:8080/v2/api-docs
+        - image: nginx:latest
+          imagePullPolicy: IfNotPresent
+          name: nginx
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d/
+              name: nginx-conf
       volumes:
+        - name: nginx-conf
+          emptyDir: {}
         - name: k8scrud-manifests
-          persistentVolumeClaim:
-              claimName: k8scrud
+          configMap:
+            name: k8scrud-manifests
+            optional: true
       affinity:
         podAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:

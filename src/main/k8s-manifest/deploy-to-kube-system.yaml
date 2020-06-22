@@ -49,6 +49,23 @@ spec:
         prometheus.io/port: "8080"
     spec:
       serviceAccountName: k8scrud
+      initContainers:
+        - image: fritzduchardt/nginx-environment-configurator:latest
+          name: nginx-environment-configurator
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: "/work-dir"
+          env:
+            - name: NGINX_CONFIG_PATH
+              value: "/work-dir/default.conf"
+            - name: LOCATION_1
+              value: "/"
+            - name: PROXYPASS_1
+              value: "http://localhost:8080/"
+            - name: LOCATION_2
+              value: "/swagger"
+            - name: PROXYPASS_2
+              value: "http://localhost:8081/"
       containers:
         - image: fritzduchardt/k8scrud:latest
           imagePullPolicy: Always
@@ -60,41 +77,46 @@ spec:
           livenessProbe:
             httpGet:
               path: /health
-              port: 8080
+              port: 9090
           readinessProbe:
             httpGet:
               path: /health
-              port: 8080
+              port: 9090
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: production
           volumeMounts:
             - mountPath: /k8scrud-manifests
               name: k8scrud-manifests
+        - image: swaggerapi/swagger-ui:latest
+          imagePullPolicy: IfNotPresent
+          name: swaggerapi
+          ports:
+            - name: http
+              containerPort: 8081
+              protocol: TCP
+          env:
+            - name: PORT
+              value: "8081"
+            - name: SWAGGER_JSON_URL
+              value: http://localhost:8080/v2/api-docs
+        - image: nginx:latest
+          imagePullPolicy: IfNotPresent
+          name: nginx
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d/
+              name: nginx-conf
       volumes:
+        - name: nginx-conf
+          emptyDir: {}
         - name: k8scrud-manifests
-          persistentVolumeClaim:
-            claimName: k8scrud
-      affinity:
-        podAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - topologyKey: kubernetes.io/hostname
-              labelSelector:
-                matchLabels:
-                  app.kubernetes.io/name: k8scrud
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: k8scrud
-  namespace: kube-system
-spec:
-  accessModes:
-    - ReadWriteOnce
-  volumeMode: Filesystem
-  resources:
-    requests:
-      storage: 1078Mi
+          configMap:
+            name: k8scrud-manifests
+            optional: true
 ---
 apiVersion: v1
 kind: Service
@@ -112,7 +134,7 @@ spec:
   ports:
     - port: 8080
       protocol: TCP
-      targetPort: 8080
+      targetPort: 80
   selector:
     app.kubernetes.io/name: k8scrud
   type: ClusterIP

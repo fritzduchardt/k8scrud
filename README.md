@@ -8,7 +8,7 @@ This project is intended both as a *proof-of-concept* for emulation as well as a
 
 **In a nutshell**, K8scrud deploys a Pod with a web server and kubectl to your cluster. You transfer your K8s manifest to this pod. Now you can deploy or delete it dynamically by calling the web server with the name of the manifest.
 
-**More specifically**, K8scrud runs on 1 Pod for simplicity but could be scaled up to ensure availability. Its Pods mount the same Persistent Volume for storage of K8s manifests. Due to limitations of some cloud providers with Binding PV from multiple nodes, they are configured to run on the same node.
+**More specifically**, K8scrud runs on 1 Pod for simplicity but could be scaled up to ensure availability. K8s manifests are handed to K8scrud via a ConfigMap.
 You have the option to either install K8scrud into a singular namespace with RBAC rights **only on that namespace** or into the kube-system namespace with **cluster admin rights**.
 
 ## Installation
@@ -39,31 +39,29 @@ helm install k8scrud ./src/main/helm/k8scrud --set-string namespace=default
 
 Installation into kube-system with cluster admin rights:
 ```shell script
-helm install k8scrud ./k8scrud --set serviceAccount.useClusterAdminRole=true
+helm install k8scrud ./src/main/helm/k8scrud --set serviceAccount.useClusterAdminRole=true
 ```
 
 Installation with **Prometheus scraping** enabled:
 ```shell script
-helm install k8scrud ./k8scrud --set serviceAccount.useClusterAdminRole=true --set-string service.annotations."prometheus\.io/scrape"=true --set service.annotations."prometheus\.io/path"="/prometheus" --set-string service.annotations."prometheus\.io/port"=9090
+helm install k8scrud ./src/main/helm/k8scrud --set serviceAccount.useClusterAdminRole=true --set-string service.annotations."prometheus\.io/scrape"=true --set service.annotations."prometheus\.io/path"="/prometheus" --set-string service.annotations."prometheus\.io/port"=9090
 ```
 
 **Please note** that the K8sCrud Helm chart is based on the standard template and is configurable beyond the afore mentioned settings.
 
 ## Usage
 
-After installation, wait until the K8scrud Pods are running. This can take a couple of seconds, since a Persistent Volume needs to get provisioned:
+After installation, wait until the K8scrud Pods are running:
 
-### Upload manifests to K8scrud
+### Create a configmap with your manifests to K8scrud
 
-Transfer your K8s manifest files to K8scrud, e.g. for the provided example-with-ingress.yaml file:
+Create a ConfigMap with name to transfer your K8s manifest files to K8scrud, e.g.:
 
 ```shell script
-# Obtain the name of one of the K8scrud Pods
-K8SCRUD_POD=$(kubectl get pod -n default -l app.kubernetes.io/name=k8scrud -o jsonpath="{.items[0].metadata.name}")
-
-# Copy your K8s manifest to the K8scrud Pod into the "k8scrud-manifests" folder
-kubectl cp -n default  k8scrud-manifests/example.yaml $K8SCRUD_POD:/k8scrud-manifests
+kubectl create cm k8scrud-manifests --from-file=k8scrud-manifests/example.yaml --from-file=k8scrud-manifests/example-with-ingress.yaml
 ```
+
+It will take a couple of seconds until the ConfigMap changes have propagated to the Pod.
 
 **Please ensure that your manifest contains all K8s resources for your deployment in one file concatenated with "---"**
 
@@ -103,6 +101,26 @@ curl -v -X DELETE localhost:8080/example/[k8sCrudId-of-your-deployment]
 ```
 
 Enjoy! If you questions or feature requests, **please contact fritz@duchardt.net**
+
+## Swagger UI
+
+Swagger documentation can be viewed as follows.
+
+For kube-system installations:
+
+```shell script
+kubectl port-forward service/k8scrud 8080 -n kube-system
+```
+
+For default namespace installations:
+
+```shell script
+kubectl port-forward service/k8scrud 8080 
+```
+
+Then open in a browser:
+
+http://localhost:8080/swagger/
 
 ## Development
 

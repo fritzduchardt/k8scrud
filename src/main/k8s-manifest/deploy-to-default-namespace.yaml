@@ -68,11 +68,11 @@ spec:
               value: "/work-dir/default.conf"
             - name: LOCATION_1
               value: "/"
-            - name: PROXYPATH_1
+            - name: PROXYPASS_1
               value: "http://localhost:8080/"
             - name: LOCATION_2
               value: "/swagger"
-            - name: PROXYPATH_2
+            - name: PROXYPASS_2
               value: "http://localhost:8081/"
       containers:
         - image: fritzduchardt/k8scrud:latest
@@ -91,10 +91,11 @@ spec:
               path: /health
               port: 9090
           env:
-            - name: server.port
-              value: "8081"
             - name: SPRING_PROFILES_ACTIVE
               value: production
+          volumeMounts:
+            - mountPath: /k8scrud-manifests
+              name: k8scrud-manifests
         - image: swaggerapi/swagger-ui:latest
           imagePullPolicy: IfNotPresent
           name: swaggerapi
@@ -121,27 +122,9 @@ spec:
         - name: nginx-conf
           emptyDir: {}
         - name: k8scrud-manifests
-          persistentVolumeClaim:
-            claimName: k8scrud
-      affinity:
-        podAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - topologyKey: kubernetes.io/hostname
-              labelSelector:
-                matchLabels:
-                  app.kubernetes.io/name: k8scrud
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: k8scrud
-spec:
-  accessModes:
-    - ReadWriteOnce
-  volumeMode: Filesystem
-  resources:
-    requests:
-      storage: 1078Mi
+          configMap:
+            name: k8scrud-manifests
+            optional: true
 ---
 apiVersion: v1
 kind: Service
